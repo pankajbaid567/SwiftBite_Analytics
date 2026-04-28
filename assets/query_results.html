@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SwiftBite Analytics — Query Results</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0f172a; color: #e2e8f0; font-family: 'Inter', sans-serif; }
+
+  .query-card {
+    max-width: 900px; margin: 40px auto; background: #1e293b;
+    border-radius: 16px; overflow: hidden;
+    border: 1px solid #334155; box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  }
+  .query-header {
+    padding: 20px 28px; background: linear-gradient(135deg, #0f766e 0%, #0e7490 100%);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .query-header h2 { font-size: 18px; font-weight: 700; color: #fff; }
+  .query-badge {
+    background: rgba(255,255,255,0.2); padding: 4px 14px; border-radius: 20px;
+    font-size: 12px; font-weight: 600; color: #fff; letter-spacing: 0.5px;
+  }
+  .query-sql {
+    padding: 16px 28px; background: #0f172a; border-bottom: 1px solid #1e293b;
+    font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #94a3b8;
+    line-height: 1.7; white-space: pre-wrap;
+  }
+  .sql-keyword { color: #818cf8; font-weight: 600; }
+  .sql-function { color: #34d399; }
+  .sql-string { color: #fbbf24; }
+  .sql-comment { color: #475569; font-style: italic; }
+
+  .query-result { padding: 24px 28px; }
+  .query-result table {
+    width: 100%; border-collapse: collapse; font-size: 14px;
+  }
+  .query-result th {
+    text-align: left; padding: 12px 16px; background: #334155;
+    color: #94a3b8; font-weight: 600; font-size: 12px;
+    text-transform: uppercase; letter-spacing: 1px;
+    border-bottom: 2px solid #0f766e;
+  }
+  .query-result td {
+    padding: 12px 16px; border-bottom: 1px solid #1e3a5f;
+    color: #e2e8f0; font-family: 'JetBrains Mono', monospace; font-size: 13px;
+  }
+  .query-result tr:hover td { background: rgba(14,116,144,0.1); }
+  .query-result tr:last-child td { border-bottom: none; }
+
+  .highlight { color: #34d399; font-weight: 600; }
+  .warn { color: #f97316; font-weight: 600; }
+  .danger { color: #ef4444; font-weight: 600; }
+
+  .insight-bar {
+    padding: 14px 28px; background: #162032;
+    border-top: 1px solid #334155; font-size: 13px; color: #64748b;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .insight-bar span { color: #fbbf24; }
+
+  .page-break { height: 60px; }
+</style>
+</head>
+<body>
+
+<!-- ================ Q1: Orders by City ================ -->
+<div class="query-card" id="q1">
+  <div class="query-header">
+    <h2>Q1 — Total Orders Per City</h2>
+    <span class="query-badge">BEGINNER</span>
+  </div>
+  <div class="query-sql"><span class="sql-keyword">SELECT</span> u.city, <span class="sql-function">COUNT</span>(o.order_id) <span class="sql-keyword">AS</span> total_orders
+<span class="sql-keyword">FROM</span> orders o <span class="sql-keyword">JOIN</span> users u <span class="sql-keyword">ON</span> o.user_id = u.user_id
+<span class="sql-keyword">GROUP BY</span> u.city <span class="sql-keyword">ORDER BY</span> total_orders <span class="sql-keyword">DESC</span>;</div>
+  <div class="query-result">
+    <table>
+      <tr><th>City</th><th>Total Orders</th></tr>
+      <tr><td>Mumbai</td><td class="highlight">1,068</td></tr>
+      <tr><td>Delhi</td><td>783</td></tr>
+      <tr><td>Bangalore</td><td>746</td></tr>
+      <tr><td>Pune</td><td>501</td></tr>
+      <tr><td>Kolkata</td><td>390</td></tr>
+      <tr><td>Hyderabad</td><td>377</td></tr>
+      <tr><td>Chennai</td><td>366</td></tr>
+      <tr><td>Jaipur</td><td>316</td></tr>
+      <tr><td>Ahmedabad</td><td>236</td></tr>
+      <tr><td>Lucknow</td><td>217</td></tr>
+    </table>
+  </div>
+  <div class="insight-bar">💡 <span>Insight:</span> Mumbai alone drives 21.4% of total platform orders — strong metro concentration.</div>
+</div>
+
+<!-- ================ Q5: Revenue by Payment ================ -->
+<div class="query-card" id="q5">
+  <div class="query-header">
+    <h2>Q5 — Revenue by Payment Method</h2>
+    <span class="query-badge">BEGINNER</span>
+  </div>
+  <div class="query-sql"><span class="sql-keyword">SELECT</span> p.payment_method, <span class="sql-function">COUNT</span>(p.payment_id) <span class="sql-keyword">AS</span> transactions,
+       <span class="sql-function">ROUND</span>(<span class="sql-function">SUM</span>(p.amount), 2) <span class="sql-keyword">AS</span> total_revenue,
+       <span class="sql-function">ROUND</span>(100.0 * <span class="sql-function">COUNT</span>(*) / <span class="sql-function">SUM</span>(<span class="sql-function">COUNT</span>(*)) <span class="sql-keyword">OVER</span> (), 1) <span class="sql-keyword">AS</span> share_pct
+<span class="sql-keyword">FROM</span> payments p <span class="sql-keyword">WHERE</span> payment_status = <span class="sql-string">'Success'</span>
+<span class="sql-keyword">GROUP BY</span> p.payment_method <span class="sql-keyword">ORDER BY</span> total_revenue <span class="sql-keyword">DESC</span>;</div>
+  <div class="query-result">
+    <table>
+      <tr><th>Payment Method</th><th>Transactions</th><th>Total Revenue</th><th>Share</th></tr>
+      <tr><td>UPI</td><td class="highlight">1,840</td><td>₹8,80,545</td><td>39.6%</td></tr>
+      <tr><td>Wallet</td><td>803</td><td>₹3,95,723</td><td>17.3%</td></tr>
+      <tr><td>COD</td><td>723</td><td>₹3,73,839</td><td>15.6%</td></tr>
+      <tr><td>Credit Card</td><td>709</td><td>₹3,40,408</td><td>15.3%</td></tr>
+      <tr><td>Debit Card</td><td>570</td><td>₹2,77,714</td><td>12.3%</td></tr>
+    </table>
+  </div>
+  <div class="insight-bar">💡 <span>Insight:</span> UPI dominates at 40% share with lowest processing fees (~0.3% MDR).</div>
+</div>
+
+<!-- ================ Q18: RFM Segmentation ================ -->
+<div class="query-card" id="q18">
+  <div class="query-header">
+    <h2>Q18 — RFM Customer Segmentation</h2>
+    <span class="query-badge">ADVANCED · CTE + NTILE</span>
+  </div>
+  <div class="query-sql"><span class="sql-keyword">WITH</span> rfm_base <span class="sql-keyword">AS</span> (...), rfm_scores <span class="sql-keyword">AS</span> (
+  <span class="sql-keyword">SELECT</span> *, <span class="sql-function">NTILE</span>(5) <span class="sql-keyword">OVER</span> (<span class="sql-keyword">ORDER BY</span> recency_days <span class="sql-keyword">DESC</span>) <span class="sql-keyword">AS</span> r_score,
+         <span class="sql-function">NTILE</span>(5) <span class="sql-keyword">OVER</span> (<span class="sql-keyword">ORDER BY</span> frequency) <span class="sql-keyword">AS</span> f_score,
+         <span class="sql-function">NTILE</span>(5) <span class="sql-keyword">OVER</span> (<span class="sql-keyword">ORDER BY</span> monetary) <span class="sql-keyword">AS</span> m_score
+  <span class="sql-keyword">FROM</span> rfm_base)
+<span class="sql-keyword">SELECT</span> segment, <span class="sql-function">COUNT</span>(*), <span class="sql-function">SUM</span>(monetary), <span class="sql-function">AVG</span>(frequency) ...;</div>
+  <div class="query-result">
+    <table>
+      <tr><th>Segment</th><th>Customers</th><th>% of Users</th><th>Total Revenue</th><th>Avg Orders</th><th>Avg Recency</th></tr>
+      <tr><td class="highlight">🏆 Champions</td><td>183</td><td>20.3%</td><td class="highlight">₹8,75,742</td><td>9.6</td><td>13 days</td></tr>
+      <tr><td>⭐ Loyal Customers</td><td>221</td><td>24.5%</td><td>₹5,99,384</td><td>5.8</td><td>35 days</td></tr>
+      <tr><td class="warn">⚠️ At Risk</td><td>136</td><td>15.1%</td><td>₹3,60,021</td><td>5.3</td><td>121 days</td></tr>
+      <tr><td class="danger">💀 Lost</td><td>226</td><td>25.1%</td><td>₹1,97,631</td><td>1.8</td><td>180 days</td></tr>
+      <tr><td>🆕 New Customers</td><td>73</td><td>8.1%</td><td>₹76,975</td><td>2.1</td><td>17 days</td></tr>
+      <tr><td>👀 Need Attention</td><td>63</td><td>7.0%</td><td>₹64,705</td><td>2.2</td><td>52 days</td></tr>
+    </table>
+  </div>
+  <div class="insight-bar">💡 <span>Insight:</span> Champions (20.3%) generate ₹8.76L — 40% of total revenue. Lost customers (25.1%) need win-back campaigns.</div>
+</div>
+
+<!-- ================ Q24: Pareto Analysis ================ -->
+<div class="query-card" id="q24">
+  <div class="query-header">
+    <h2>Q24 — Pareto Analysis (80/20 Rule)</h2>
+    <span class="query-badge">ADVANCED · PERCENT_RANK</span>
+  </div>
+  <div class="query-sql"><span class="sql-keyword">WITH</span> customer_revenue <span class="sql-keyword">AS</span> (
+  <span class="sql-keyword">SELECT</span> user_id, <span class="sql-function">SUM</span>(final_amount) <span class="sql-keyword">AS</span> total_revenue,
+         <span class="sql-function">PERCENT_RANK</span>() <span class="sql-keyword">OVER</span> (<span class="sql-keyword">ORDER BY</span> <span class="sql-function">SUM</span>(final_amount) <span class="sql-keyword">DESC</span>) <span class="sql-keyword">AS</span> pct_rank
+  <span class="sql-keyword">FROM</span> orders <span class="sql-keyword">WHERE</span> status = <span class="sql-string">'Delivered'</span> <span class="sql-keyword">GROUP BY</span> user_id)
+<span class="sql-keyword">SELECT</span> customer_tier, customer_count, tier_revenue, revenue_share ...;</div>
+  <div class="query-result">
+    <table>
+      <tr><th>Customer Tier</th><th>Customers</th><th>Revenue</th><th>Revenue Share</th></tr>
+      <tr><td>Top 21–50%</td><td>270</td><td>₹7,26,776</td><td>33.4%</td></tr>
+      <tr><td>Top 6–20%</td><td>135</td><td>₹6,43,734</td><td>29.6%</td></tr>
+      <tr><td>Bottom 50%</td><td>451</td><td>₹4,47,471</td><td>20.6%</td></tr>
+      <tr><td class="highlight">Top 5%</td><td class="highlight">46</td><td class="highlight">₹3,56,479</td><td class="highlight">16.4%</td></tr>
+    </table>
+  </div>
+  <div class="insight-bar">💡 <span>Insight:</span> Top 20% of customers generate 46% of revenue — moderate concentration, but top 5% alone = 16.4%.</div>
+</div>
+
+<!-- ================ Q21: Cohort Retention ================ -->
+<div class="query-card" id="q21">
+  <div class="query-header">
+    <h2>Q21 — Cohort Retention Analysis</h2>
+    <span class="query-badge">ADVANCED · CTE + DATE_TRUNC</span>
+  </div>
+  <div class="query-sql"><span class="sql-keyword">WITH</span> first_order <span class="sql-keyword">AS</span> (...), activity <span class="sql-keyword">AS</span> (...)
+<span class="sql-keyword">SELECT</span> cohort_month, cohort_size,
+  <span class="sql-function">ROUND</span>(100.0 * <span class="sql-function">COUNT</span>(<span class="sql-keyword">DISTINCT CASE WHEN</span> month_offset = 1 ...) / n, 0) <span class="sql-keyword">AS</span> m1,
+  <span class="sql-comment">-- ... M2 through M6</span>
+<span class="sql-keyword">FROM</span> activity <span class="sql-keyword">JOIN</span> cohort_size ...;</div>
+  <div class="query-result">
+    <table>
+      <tr><th>Cohort</th><th>Users</th><th>M0</th><th>M1</th><th>M2</th><th>M3</th><th>M4</th><th>M5</th><th>M6</th></tr>
+      <tr><td>Jan 2025</td><td>189</td><td class="highlight">100%</td><td>33%</td><td>33%</td><td>36%</td><td>43%</td><td>38%</td><td>37%</td></tr>
+      <tr><td>Feb 2025</td><td>146</td><td class="highlight">100%</td><td>38%</td><td>34%</td><td>38%</td><td>34%</td><td>39%</td><td>33%</td></tr>
+      <tr><td>Mar 2025</td><td>117</td><td class="highlight">100%</td><td>34%</td><td>38%</td><td>32%</td><td>33%</td><td>35%</td><td>32%</td></tr>
+      <tr><td>Apr 2025</td><td>110</td><td class="highlight">100%</td><td>28%</td><td>34%</td><td>35%</td><td>37%</td><td>32%</td><td>28%</td></tr>
+      <tr><td>May 2025</td><td>95</td><td class="highlight">100%</td><td>36%</td><td>36%</td><td>41%</td><td>42%</td><td>39%</td><td>34%</td></tr>
+      <tr><td>Jun 2025</td><td>64</td><td class="highlight">100%</td><td class="highlight">45%</td><td>34%</td><td>39%</td><td>44%</td><td>33%</td><td>38%</td></tr>
+    </table>
+  </div>
+  <div class="insight-bar">💡 <span>Insight:</span> Month-1 retention averages 33-45%. Retention stabilizes at ~33-38% from M3 onwards — strong base for loyalty programs.</div>
+</div>
+
+<!-- ================ Q14: Cancellation Rate ================ -->
+<div class="query-card" id="q14">
+  <div class="query-header">
+    <h2>Q14 — Cancellation Rate by Restaurant</h2>
+    <span class="query-badge">INTERMEDIATE · CASE WHEN</span>
+  </div>
+  <div class="query-sql"><span class="sql-keyword">SELECT</span> r.name, r.city, <span class="sql-function">COUNT</span>(o.order_id) <span class="sql-keyword">AS</span> total_orders,
+  <span class="sql-function">ROUND</span>(100.0 * <span class="sql-function">SUM</span>(<span class="sql-keyword">CASE WHEN</span> o.status = <span class="sql-string">'Cancelled'</span> <span class="sql-keyword">THEN</span> 1 <span class="sql-keyword">ELSE</span> 0 <span class="sql-keyword">END</span>)
+        / <span class="sql-function">COUNT</span>(*), 1) <span class="sql-keyword">AS</span> cancellation_rate
+<span class="sql-keyword">FROM</span> orders o <span class="sql-keyword">JOIN</span> restaurants r ... <span class="sql-keyword">HAVING COUNT</span>(*) >= 10
+<span class="sql-keyword">ORDER BY</span> cancellation_rate <span class="sql-keyword">DESC LIMIT</span> 10;</div>
+  <div class="query-result">
+    <table>
+      <tr><th>Restaurant</th><th>City</th><th>Cuisine</th><th>Orders</th><th>Cancelled</th><th>Cancel Rate</th></tr>
+      <tr><td>Grill Master - Ban</td><td>Bangalore</td><td>Chinese</td><td>16</td><td>5</td><td class="danger">31.3%</td></tr>
+      <tr><td>Paratha Plaza - Jai</td><td>Jaipur</td><td>Fast Food</td><td>21</td><td>6</td><td class="danger">28.6%</td></tr>
+      <tr><td>Paneer Point - Del</td><td>Delhi</td><td>North Indian</td><td>11</td><td>3</td><td class="warn">27.3%</td></tr>
+      <tr><td>Pizza Paradise - Ban</td><td>Bangalore</td><td>Chinese</td><td>15</td><td>4</td><td class="warn">26.7%</td></tr>
+      <tr><td>Royal Biryani House - Hyd</td><td>Hyderabad</td><td>Fast Food</td><td>24</td><td>6</td><td class="warn">25.0%</td></tr>
+      <tr><td>Paratha Plaza - Del</td><td>Delhi</td><td>Healthy</td><td>21</td><td>5</td><td>23.8%</td></tr>
+      <tr><td>Spice Garden - Pun</td><td>Pune</td><td>South Indian</td><td>17</td><td>4</td><td>23.5%</td></tr>
+      <tr><td>Dragon Wok - Pun</td><td>Pune</td><td>Chinese</td><td>18</td><td>4</td><td>22.2%</td></tr>
+      <tr><td>Seafood Shack - Mum</td><td>Mumbai</td><td>Italian</td><td>41</td><td>9</td><td>22.0%</td></tr>
+      <tr><td>Dragon Wok - Kol</td><td>Kolkata</td><td>North Indian</td><td>23</td><td>5</td><td>21.7%</td></tr>
+    </table>
+  </div>
+  <div class="insight-bar">💡 <span>Insight:</span> Grill Master (Bangalore) has 3x the platform avg cancellation rate. Needs immediate menu & ops audit.</div>
+</div>
+
+</body>
+</html>

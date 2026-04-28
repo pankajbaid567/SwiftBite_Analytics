@@ -103,6 +103,44 @@ restaurants ────────────┘             ├──▶ pay
 
 Each query includes: **Problem Statement → SQL Code → Explanation → Business Insight**
 
+### 📸 Query Result Screenshots
+
+<details>
+<summary><b>Q1 — Total Orders Per City</b> (click to expand)</summary>
+
+![Q1 Result](assets/screenshots/q1_orders_by_city.png)
+</details>
+
+<details>
+<summary><b>Q5 — Revenue by Payment Method</b></summary>
+
+![Q5 Result](assets/screenshots/q5_revenue_by_payment.png)
+</details>
+
+<details>
+<summary><b>Q18 — RFM Customer Segmentation</b> ⭐</summary>
+
+![Q18 Result](assets/screenshots/q18_rfm_segmentation.png)
+</details>
+
+<details>
+<summary><b>Q24 — Pareto Analysis (80/20 Rule)</b> ⭐</summary>
+
+![Q24 Result](assets/screenshots/q24_pareto_analysis.png)
+</details>
+
+<details>
+<summary><b>Q21 — Cohort Retention Analysis</b> ⭐</summary>
+
+![Q21 Result](assets/screenshots/q21_cohort_retention.png)
+</details>
+
+<details>
+<summary><b>Q14 — Cancellation Rate by Restaurant</b></summary>
+
+![Q14 Result](assets/screenshots/q14_cancellation_rate.png)
+</details>
+
 ---
 
 ## 💡 Key Insights
