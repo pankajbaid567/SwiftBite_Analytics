@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.pyc
+.env
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Results (regenerate by running queries)
+results/
+
+# Runner script (utility only)
+run_all_queries.sh
